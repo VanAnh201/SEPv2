@@ -11,16 +11,28 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/components/ui/dialog';
+import { useAuth } from 'context/AuthProvider';
 
 export default function LoginForm() {
 	const [loading, setLoading] = useState(false);
 	const [showPassword, setShowPassword] = useState(false);
+	const [showForgotDialog, setShowForgotDialog] = useState(false);
 	const router = useRouter();
+	const { login } = useAuth();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
+		reset,
+	} = useForm();
+
+	const {
+		register: registerForgot,
+		handleSubmit: handleForgotSubmit,
+		formState: { errors: forgotErrors },
+		reset: resetForgot,
 	} = useForm();
 
 	const onSubmit = async (data) => {
@@ -28,27 +40,45 @@ export default function LoginForm() {
 		try {
 			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/login', {
 				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
+				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify(data),
 			});
-
+			const responseData = await response.json();
 			if (response.ok) {
-				toast.success('Login successful! Redirecting to...');
-				setTimeout(() => {
-					router.push('/');
-				}, 2000);
+				const accessToken = responseData.Data.accessToken;
+				const role = responseData.Data.role;
+				localStorage.setItem('accessToken', accessToken);
+				login({ accessToken });
+
+				toast.success('Login successful! Redirecting...');
+				reset();
+				role === 'Manager' ? router.push('/manager') : router.push('/');
 			} else {
-				const errorData = await response.json();
-				console.error('Login failed:', errorData);
-				toast.error(`Login failed: ${errorData.message || 'Unknown error'}`);
+				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
 			}
 		} catch (error) {
-			console.error('Error:', error);
-			alert('An error occurred. Please try again later.');
+			toast.error('An error occurred. Please try again later.');
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const handleForgotPassword = async (data) => {
+		try {
+			const response = await fetch('https://homestaybooking-001-site1.ntempurl.com/api/Auth/forgot-password', {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(data),
+			});
+			if (response.ok) {
+				toast.success('Password reset email sent!');
+				resetForgot();
+				setShowForgotDialog(false);
+			} else {
+				toast.error('Failed to send reset email.');
+			}
+		} catch (error) {
+			toast.error('An error occurred. Please try again.');
 		}
 	};
 
@@ -67,13 +97,7 @@ export default function LoginForm() {
 							<Input
 								id='email'
 								type='email'
-								{...register('email', {
-									required: 'Email is required',
-									pattern: {
-										value: /\S+@\S+\.\S+/,
-										message: 'Invalid email address',
-									},
-								})}
+								{...register('email', { required: 'Email is required' })}
 								className='border border-black'
 								placeholder='john@example.com'
 							/>
@@ -85,13 +109,7 @@ export default function LoginForm() {
 								<Input
 									id='password'
 									type={showPassword ? 'text' : 'password'}
-									{...register('password', {
-										required: 'Password is required',
-										minLength: {
-											value: 8,
-											message: 'Password must be at least 8 characters long',
-										},
-									})}
+									{...register('password', { required: 'Password is required' })}
 									className='pr-10 border border-black'
 									placeholder='*******'
 								/>
@@ -105,19 +123,43 @@ export default function LoginForm() {
 							</div>
 							{errors.password && <p className='text-sm text-red-500'>{errors.password.message}</p>}
 						</div>
-						<div className='mt-4 text-center'>
-							<p>
-								Don't have an account?{' '}
-								<Link href='/auth/register'>
-									<button className='text-blue-500 hover:underline'>Register</button>
-								</Link>
-							</p>
+						<div className='text-sm'>
+							Don't have an account?{' '}
+							<Link href='/auth/register' className='text-blue-500 hover:underline'>
+								Register
+							</Link>
 						</div>
 					</CardContent>
-					<CardFooter>
+					<CardFooter className='flex flex-col'>
 						<Button type='submit' className='w-full' disabled={loading}>
 							{loading ? 'Logging in...' : 'Login'}
 						</Button>
+						<div className='mt-4 text-center'>
+							<Dialog open={showForgotDialog} onOpenChange={setShowForgotDialog}>
+								<DialogTrigger asChild>
+									<button className='text-sm text-blue-500 hover:underline'>Forgot Password?</button>
+								</DialogTrigger>
+								<DialogContent>
+									<DialogHeader>
+										<DialogTitle>Forgot Password</DialogTitle>
+									</DialogHeader>
+									<form
+										onSubmit={handleForgotSubmit(handleForgotPassword)}
+										className='flex flex-col gap-3'
+									>
+										<Label>Email</Label>
+										<Input
+											{...registerForgot('email', { required: 'Email is required' })}
+											placeholder='Enter your email'
+										/>
+										{forgotErrors.email && (
+											<p className='text-sm text-red-500'>{forgotErrors.email.message}</p>
+										)}
+										<Button type='submit'>Submit</Button>
+									</form>
+								</DialogContent>
+							</Dialog>
+						</div>
 					</CardFooter>
 				</form>
 			</Card>
