@@ -7,7 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ManagerLayout = ({ children }) => {
 	return (
-		<div className='flex items-center justify-center h-full bg-gray-100'>
+		<div className='flex items-center justify-center bg-gray-100'>
 			<Head>
 				<title>Runa: Incredible Places to Stay and Things to Do</title>
 				<meta

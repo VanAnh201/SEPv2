@@ -46,10 +46,11 @@ export const AuthProvider = ({ children }) => {
 		data: dataProfile,
 		isLoading,
 		error,
+		refetch,
 	} = useQuery({
 		queryKey: ['dataProfile'],
 		queryFn: () => getUserInfo(userId),
-		enabled: !!userId,
+		refetchOnWindowFocus: true,
 	});
 
 	useEffect(() => {
@@ -64,7 +65,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<Provider>
-			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile }}>
+			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch }}>
 				{children}
 			</AuthContext.Provider>
 		</Provider>

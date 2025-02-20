@@ -2,7 +2,6 @@ import Head from 'next/head';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../../styles/globals.css';
 
 const AuthLayout = ({ children }) => {
 	return (

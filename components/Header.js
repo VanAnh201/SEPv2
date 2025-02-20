@@ -23,9 +23,11 @@ import {
 import { Button } from './components/ui/button';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useAuth } from 'context/AuthProvider';
 
 const Header = ({ placeholder }) => {
 	const router = useRouter();
+	const { dataProfile, logout } = useAuth();
 
 	const navRef = useRef(null);
 	const headerRef = useRef(null);
@@ -205,34 +207,37 @@ const Header = ({ placeholder }) => {
 
 				<div className='profile'>
 					<ThemeToggle icon />
-					<Link href='/auth/register'>
-						<button className='px-2 py-1 bg-transparent border border-white rounded-md'>
-							Login/Register
-						</button>
-					</Link>
-					{/* <DropdownMenu>
-						<DropdownMenuTrigger asChild>
-							<div className='user'>
-								<Menu className='menu' />
-								<User className='userIcon' />
-							</div>
-						</DropdownMenuTrigger>
-						<DropdownMenuContent className='w-56'>
-							<DropdownMenuLabel>My Account</DropdownMenuLabel>
-							<DropdownMenuSeparator />
-							<DropdownMenuGroup>
-								<DropdownMenuItem>
-									Profile
-									<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+					{dataProfile ? (
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<div className='user'>
+									<Menu className='menu' />
+									<User className='userIcon' />
+								</div>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent className='w-56'>
+								<DropdownMenuLabel>My Account</DropdownMenuLabel>
+								<DropdownMenuSeparator />
+								<DropdownMenuGroup>
+									<DropdownMenuItem>
+										Profile
+										<DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+									</DropdownMenuItem>
+								</DropdownMenuGroup>
+								<DropdownMenuSeparator />
+								<DropdownMenuItem onClick={logout}>
+									Log out
+									<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
 								</DropdownMenuItem>
-							</DropdownMenuGroup>
-							<DropdownMenuSeparator />
-							<DropdownMenuItem>
-								Log out
-								<DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-							</DropdownMenuItem>
-						</DropdownMenuContent>
-					</DropdownMenu> */}
+							</DropdownMenuContent>
+						</DropdownMenu>
+					) : (
+						<Link href='/auth/register'>
+							<button className='px-2 py-1 bg-transparent border border-white rounded-md'>
+								Login/Register
+							</button>
+						</Link>
+					)}
 				</div>
 				{/* Mobile Nav */}
 				<MobileNav />

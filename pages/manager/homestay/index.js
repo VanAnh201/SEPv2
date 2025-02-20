@@ -9,14 +9,11 @@ import { Slider } from '@/components/components/ui/slider';
 import { Car, Star, Wifi, PocketIcon as Pool } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Modal from 'react-modal';
-import { useAuth } from 'context/AuthProvider';
-import { createHomeStay } from 'api/homestay/createHomeStay';
 import Link from 'next/link';
 
 Modal.setAppElement('#__next');
 
 const Homestay = () => {
-	const { dataProfile } = useAuth();
 	const [selectedHomeStayID, setSelectedHomeStayID] = useState(null);
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [filters, setFilters] = useState({
@@ -37,18 +34,6 @@ const Homestay = () => {
 		queryKey: ['homeStays', filters],
 		queryFn: () => getAllHomeStay(filters),
 	});
-
-	const mutation = useMutation({
-		mutationFn: (homeStayData) => createHomeStay(dataProfile.id, homeStayData),
-		onSuccess: () => {
-			queryClient.invalidateQueries(['homeStays']);
-			setIsModalOpen(false);
-		},
-	});
-
-	const handleCreateHomeStay = (data) => {
-		console.log('Creating homestay with data:', data);
-	};
 
 	const handleCheckboxChange = (value, category) => {
 		setFilters((prevFilters) => ({
