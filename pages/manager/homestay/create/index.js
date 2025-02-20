@@ -11,7 +11,9 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useAuth } from 'context/AuthProvider';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createHomeStay } from 'api/homestay/createHomeStay';
+import { createHomeStay } from 'pages/api/homestay/createHomeStay';
+import { uploadImage } from 'pages/api/image/uploadImage';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 
 const MAX_IMAGES = 8;
 
@@ -20,11 +22,11 @@ const CreateHomeStay = () => {
 	const queryClient = useQueryClient();
 
 	const [formData, setFormData] = useState({
-		mainImage: null,
+		mainImage: '',
 		name: '',
 		openIn: '',
 		description: '',
-		standard: 1,
+		standar: 1,
 		address: '',
 		city: '',
 		isBlocked: false,
@@ -33,7 +35,7 @@ const CreateHomeStay = () => {
 		images: [],
 		price: '',
 		isDeleted: false,
-		dateAttachment: '',
+		date: '',
 	});
 
 	const mutation = useMutation({
@@ -42,11 +44,11 @@ const CreateHomeStay = () => {
 			queryClient.invalidateQueries(['homeStays']);
 			toast.success('Homestay created successfully!');
 			setFormData({
-				mainImage: null,
+				mainImage: '',
 				name: '',
 				openIn: '',
 				description: '',
-				standard: 1,
+				standar: 1,
 				address: '',
 				city: '',
 				isBlocked: false,
@@ -55,7 +57,7 @@ const CreateHomeStay = () => {
 				images: [],
 				price: '',
 				isDeleted: false,
-				dateAttachment: '',
+				date: '',
 			});
 		},
 		onError: () => {
@@ -73,7 +75,7 @@ const CreateHomeStay = () => {
 			checkOutTime: formData.checkOutTime
 				? formData.checkOutTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 				: '',
-			dateAttachment: formData.dateAttachment ? formData.dateAttachment.toISOString().split('T')[0] : '',
+			date: formData.date ? formData.date.toISOString().split('T')[0] : '',
 		};
 
 		mutation.mutate(homeStayData);
@@ -87,20 +89,49 @@ const CreateHomeStay = () => {
 		});
 	};
 
-	const handleMainImageChange = (e) => {
+	const handleMainImageChange = async (e) => {
 		const file = e.target.files[0];
 		if (file) {
-			setFormData({ ...formData, mainImage: URL.createObjectURL(file) });
+			try {
+				const uploadedImageUrl = await uploadImage(file);
+				setFormData((prev) => ({ ...prev, mainImage: uploadedImageUrl.url }));
+				toast.success('Main image uploaded successfully!');
+			} catch (error) {
+				console.error('Image upload failed:', error);
+				toast.error('Failed to upload main image.');
+			}
 		}
 	};
 
-	const handleImagesChange = (e, multiple = false) => {
-		const files = multiple ? Array.from(e.target.files) : [e.target.files[0]];
+	const handleImagesChange = async (e) => {
+		const files = Array.from(e.target.files);
 		const remainingSlots = MAX_IMAGES - formData.images.length;
 		const filesToAdd = files.slice(0, remainingSlots);
-		const imageUrls = filesToAdd.map((file) => URL.createObjectURL(file));
 
-		setFormData({ ...formData, images: [...formData.images, ...imageUrls] });
+		if (!filesToAdd.length) {
+			toast.warning(`You can only add up to ${MAX_IMAGES} images.`);
+			return;
+		}
+
+		try {
+			const response = await uploadImages(filesToAdd);
+			console.log('Image upload response:', response);
+
+			if (!response || !response.urls || !Array.isArray(response.urls)) {
+				throw new Error('Image upload response is not a valid array of URLs.');
+			}
+
+			const imageUrls = response.urls.filter((url) => typeof url === 'string');
+
+			setFormData((prev) => ({
+				...prev,
+				images: [...prev.images, ...imageUrls],
+			}));
+			toast.success('Images uploaded successfully!');
+		} catch (error) {
+			console.error('Image upload failed:', error);
+			toast.error('Failed to upload images.');
+		}
 
 		if (filesToAdd.length < files.length) {
 			toast.warning(`Only ${remainingSlots} image(s) added. Maximum of ${MAX_IMAGES} images allowed.`);
@@ -120,6 +151,8 @@ const CreateHomeStay = () => {
 			[field]: date,
 		});
 	};
+
+	console.log('formData', formData);
 
 	return (
 		<ManagerLayout>
@@ -152,14 +185,15 @@ const CreateHomeStay = () => {
 							type='file'
 							accept='image/*'
 							multiple
-							onChange={(e) => handleImagesChange(e, true)}
+							onChange={handleImagesChange}
 							className='hidden'
+							id='imagesInput'
 						/>
 						<div className='grid grid-cols-4 gap-4'>
-							{formData.images.map((img, index) => (
+							{formData.images.map((url, index) => (
 								<div key={index} className='relative group'>
 									<img
-										src={img}
+										src={url}
 										alt={`Preview ${index}`}
 										className='w-full aspect-square object-cover rounded-lg'
 									/>
@@ -173,18 +207,13 @@ const CreateHomeStay = () => {
 							))}
 							{formData.images.length < MAX_IMAGES && (
 								<div
-									onClick={() => document.querySelector("input[type='file'][multiple]").click()}
+									onClick={() => document.getElementById('imagesInput').click()}
 									className='w-full aspect-square border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50'
 								>
 									<ImagePlus className='w-8 h-8 text-gray-400' />
 								</div>
 							)}
 						</div>
-						{formData.images.length >= MAX_IMAGES && (
-							<p className='text-sm text-yellow-600 mt-2'>
-								Maximum number of images reached ({MAX_IMAGES})
-							</p>
-						)}
 					</div>
 				</div>
 
@@ -225,11 +254,11 @@ const CreateHomeStay = () => {
 					<div>
 						<Label className='block font-medium mb-2'>Standard (1-5)</Label>
 						<Input
-							name='standard'
+							name='standar'
 							type='number'
 							min={1}
 							max={5}
-							value={formData.standard}
+							value={formData.standar}
 							onChange={handleChange}
 						/>
 					</div>
@@ -272,8 +301,8 @@ const CreateHomeStay = () => {
 					<div>
 						<Label className='block font-medium mb-2'>Date</Label>
 						<DatePicker
-							selected={formData.dateAttachment}
-							onChange={(date) => handleDateChange(date, 'dateAttachment')}
+							selected={formData.date}
+							onChange={(date) => handleDateChange(date, 'date')}
 							placeholderText='Date'
 							className='w-full px-2 py-1 border rounded bg-transparent'
 						/>

@@ -45,8 +45,8 @@ export default function LoginForm() {
 			});
 			const responseData = await response.json();
 			if (response.ok) {
-				const accessToken = responseData.Data.accessToken;
-				const role = responseData.Data.role;
+				const accessToken = responseData.accessToken;
+				const role = responseData.role;
 				localStorage.setItem('accessToken', accessToken);
 				login({ accessToken });
 

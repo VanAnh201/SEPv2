@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getAllHomeStay } from 'api/homestay/getAllHomeStay';
+import { getAllHomeStay } from 'pages/api/homestay/getAllHomeStay';
 import { Button } from '@/components/components/ui/button';
-import { getHomeStayDetail } from 'api/homestay/getHomeStayDetail';
+import { getHomeStayDetail } from 'pages/api/homestay/getHomeStayDetail';
 import { Checkbox } from '@/components/components/ui/checkbox';
 import { Slider } from '@/components/components/ui/slider';
 import { Car, Star, Wifi, PocketIcon as Pool } from 'lucide-react';
 import { Label } from '@/components/components/ui/label';
 import Modal from 'react-modal';
 import Link from 'next/link';
+import NoImage from '../../../public/images/no-image.jpeg';
 
 Modal.setAppElement('#__next');
 
@@ -59,8 +60,8 @@ const Homestay = () => {
 		setIsModalOpen(true);
 	};
 
-	const homestay = data?.Data;
-	const homestayDetail = homeStayDetail?.Data;
+	const homestay = data;
+	const homestayDetail = homeStayDetail;
 
 	const currentDate = new Date().toISOString().slice(0, 10);
 

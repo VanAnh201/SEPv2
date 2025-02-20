@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getAllFacility } from 'api/facility/getFacility';
+import { getAllFacility } from 'pages/api/facility/getFacility';
 import { Card, CardContent } from '@/components/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/components/ui/table';
 import { Button } from '@/components/components/ui/button';
@@ -18,11 +18,11 @@ import {
 import { Label } from '@/components/components/ui/label';
 import { Input } from '@/components/components/ui/input';
 import { Pencil, Trash2 } from 'lucide-react';
-import { createFacility } from 'api/facility/createFacility';
+import { createFacility } from 'pages/api/facility/createFacility';
 import Swal from 'sweetalert2';
-import { updateFacility } from 'api/facility/updateFacility';
+import { updateFacility } from 'pages/api/facility/updateFacility';
 import { Textarea } from '@/components/components/ui/textarea';
-import { deleteFacility } from 'api/facility/deleteFacility';
+import { deleteFacility } from 'pages/api/facility/deleteFacility';
 
 const Facility = () => {
 	const queryClient = useQueryClient();
@@ -135,7 +135,7 @@ const Facility = () => {
 		});
 	};
 
-	const dataFacility = data?.Data || [];
+	const dataFacility = data || [];
 	const totalPages = Math.ceil(dataFacility.length / itemsPerPage);
 
 	const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -217,7 +217,9 @@ const Facility = () => {
 					</Dialog>
 				</div>
 				{isLoading ? (
-					<p>Loading...</p>
+					<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
+						<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+					</div>
 				) : error ? (
 					<p>Error: {error.message}</p>
 				) : (

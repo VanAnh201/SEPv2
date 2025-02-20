@@ -1,6 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { getUserInfo } from 'api/auth/getMe';
+import { getUserInfo } from 'pages/api/auth/getMe';
 import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -31,17 +31,6 @@ export const AuthProvider = ({ children }) => {
 		}
 	};
 
-	const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
-	let userId = null;
-	if (accessToken) {
-		try {
-			const decoded = jwtDecode(accessToken);
-			userId = decoded['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
-		} catch (error) {
-			console.error('Error decoding token:', error);
-		}
-	}
-
 	const {
 		data: dataProfile,
 		isLoading,
@@ -49,7 +38,7 @@ export const AuthProvider = ({ children }) => {
 		refetch,
 	} = useQuery({
 		queryKey: ['dataProfile'],
-		queryFn: () => getUserInfo(userId),
+		queryFn: () => getUserInfo(),
 		refetchOnWindowFocus: true,
 	});
 

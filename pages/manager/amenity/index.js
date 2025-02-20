@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ManagerLayout from '../layout';
-import { getAllAmenity } from 'api/amenity/getAmenity';
+import { getAllAmenity } from 'pages/api/amenity/getAmenity';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/components/ui/button';
 import {
@@ -32,7 +32,7 @@ const Amenity = () => {
 		setDialogOpen(true);
 	};
 
-	const dataAmenity = data?.Data || [];
+	const dataAmenity = data || [];
 	const totalPages = Math.ceil(dataAmenity?.length / itemsPerPage);
 
 	const handlePrevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
@@ -80,7 +80,9 @@ const Amenity = () => {
 					</Dialog>
 				</div>
 				{isLoading ? (
-					<p>Loading...</p>
+					<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
+						<div className='w-16 h-16 border-t-4 border-blue-500 rounded-full animate-spin'></div>
+					</div>
 				) : error ? (
 					<p>Error: {error.message}</p>
 				) : (

@@ -11,11 +11,11 @@ import { useAuth } from 'context/AuthProvider';
 import { Textarea } from '@/components/components/ui/textarea';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import Swal from 'sweetalert2';
-import { updateProfile } from 'api/auth/updateProfile';
+import { updateProfile } from 'pages/api/auth/updateProfile';
 import { Eye, EyeOff } from 'lucide-react';
-import { changePassword } from 'api/auth/changePassword';
+import { changePassword } from 'pages/api/auth/changePassword';
 import Image from 'next/image';
-import { uploadImage } from 'api/image/uploadImage';
+import { uploadImage } from 'pages/api/image/uploadImage';
 
 export default function ProfilePage() {
 	const { dataProfile, refetch } = useAuth();
@@ -97,7 +97,7 @@ export default function ProfilePage() {
 
 		try {
 			const imageUrl = await uploadImage(file);
-			const avatar = imageUrl.Data.url;
+			const avatar = imageUrl?.url;
 			setProfile((prev) => ({ ...prev, avatar: avatar }));
 			toast.success('Image uploaded successfully!');
 		} catch {

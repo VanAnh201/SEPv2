@@ -28,6 +28,8 @@ export function AppSidebar() {
 	const { logout, dataProfile } = useAuth();
 	const pathname = usePathname();
 
+	console.log(dataProfile);
+
 	return (
 		<Sidebar className='z-0'>
 			<SidebarContent>
@@ -65,17 +67,22 @@ export function AppSidebar() {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<SidebarMenuButton>
-									{dataProfile && dataProfile ? (
-										<Image
-											src={dataProfile.avatar}
-											width={50}
-											height={50}
-											alt='avt'
-											className='object-contain size-8 rounded-md'
-										/>
+									{dataProfile ? (
+										dataProfile.avatar ? (
+											<Image
+												src={dataProfile.avatar}
+												width={50}
+												height={50}
+												alt='avt'
+												className='object-contain size-8 rounded-md'
+											/>
+										) : (
+											<User2 className='size-8' />
+										)
 									) : (
-										<User2 />
+										<User2 className='size-8' />
 									)}
+
 									{dataProfile?.fullName}
 									<ChevronUp className='ml-auto' />
 								</SidebarMenuButton>
