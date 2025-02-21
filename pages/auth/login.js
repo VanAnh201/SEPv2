@@ -52,7 +52,11 @@ export default function LoginForm() {
 
 				toast.success('Login successful! Redirecting...');
 				reset();
-				role === 'Manager' ? router.push('/manager') : router.push('/');
+				role === 'Manager'
+					? router.push('/manager')
+					: role === 'Admin'
+					? router.push('/admin')
+					: router.push('/');
 			} else {
 				toast.error(`Login failed: ${responseData.message || 'Unknown error'}`);
 			}
