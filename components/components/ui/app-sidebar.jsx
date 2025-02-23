@@ -1,5 +1,5 @@
 import { usePathname } from 'next/navigation';
-import { Bath, Boxes, ChevronUp, Home, Hotel, Search, Settings, User, User2 } from 'lucide-react';
+import { Bath, Boxes, ChevronUp, Home, Hotel, Newspaper, User, User2 } from 'lucide-react';
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,7 +20,7 @@ const items = [
 	{ title: 'Homestay', url: '/manager/homestay', icon: Hotel },
 	{ title: 'Facility', url: '/manager/facility', icon: Boxes },
 	{ title: 'Amenity', url: '/manager/amenity', icon: Bath },
-	{ title: 'Settings', url: '/settings', icon: Settings },
+	{ title: 'Posts', url: '/manager/posts', icon: Newspaper },
 	{ title: 'Account', url: '/manager/profile', icon: User },
 ];
 
@@ -74,7 +74,7 @@ export function AppSidebar() {
 												width={50}
 												height={50}
 												alt='avt'
-												className='object-contain size-8 rounded-md'
+												className='object-contain rounded-md size-8'
 											/>
 										) : (
 											<User2 className='size-8' />

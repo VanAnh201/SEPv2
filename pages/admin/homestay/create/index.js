@@ -152,35 +152,33 @@ const CreateHomeStay = () => {
 		});
 	};
 
-	console.log('formData', formData);
-
 	return (
 		<ManagerLayout>
 			<div className='p-4 space-y-4'>
 				<h2 className='text-xl font-bold'>Create Homestay</h2>
-				<div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
+				<div className='grid grid-cols-1 gap-4 xl:grid-cols-2'>
 					<div className='h-full'>
-						<Label className='block font-medium mb-2'>Main Image</Label>
+						<Label className='block mb-2 font-medium'>Main Image</Label>
 						<Input type='file' accept='image/*' onChange={handleMainImageChange} className='hidden' />
 						<div
 							onClick={() => document.querySelector("input[type='file']").click()}
-							className='cursor-pointer border-2 border-dashed p-3 rounded-md hover:bg-gray-50'
+							className='p-3 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50'
 						>
 							{formData.mainImage ? (
 								<img
 									src={formData.mainImage}
 									alt='Main'
-									className='w-full h-96 object-contain rounded-lg'
+									className='object-contain w-full rounded-lg h-96'
 								/>
 							) : (
-								<div className='w-full h-96 flex items-center justify-center'>
+								<div className='flex items-center justify-center w-full h-96'>
 									<ImagePlus className='w-8 h-8 text-gray-400' />
 								</div>
 							)}
 						</div>
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Images</Label>
+						<Label className='block mb-2 font-medium'>Images</Label>
 						<Input
 							type='file'
 							accept='image/*'
@@ -195,11 +193,11 @@ const CreateHomeStay = () => {
 									<img
 										src={url}
 										alt={`Preview ${index}`}
-										className='w-full aspect-square object-cover rounded-lg'
+										className='object-cover w-full rounded-lg aspect-square'
 									/>
 									<button
 										onClick={() => handleDeleteImage(index)}
-										className='absolute top-1 right-1 p-1 bg-black/50 rounded-full opacity-0 group-hover:opacity-100'
+										className='absolute p-1 rounded-full opacity-0 top-1 right-1 bg-black/50 group-hover:opacity-100'
 									>
 										<X className='w-4 h-4 text-white' />
 									</button>
@@ -208,7 +206,7 @@ const CreateHomeStay = () => {
 							{formData.images.length < MAX_IMAGES && (
 								<div
 									onClick={() => document.getElementById('imagesInput').click()}
-									className='w-full aspect-square border-2 border-dashed rounded-lg flex items-center justify-center cursor-pointer hover:bg-gray-50'
+									className='flex items-center justify-center w-full border-2 border-dashed rounded-lg cursor-pointer aspect-square hover:bg-gray-50'
 								>
 									<ImagePlus className='w-8 h-8 text-gray-400' />
 								</div>
@@ -219,22 +217,22 @@ const CreateHomeStay = () => {
 
 				<div className='grid grid-cols-2 gap-4'>
 					<div>
-						<Label className='block font-medium mb-2'>Homestay Name</Label>
+						<Label className='block mb-2 font-medium'>Homestay Name</Label>
 						<Input name='name' placeholder='Homestay Name' value={formData.name} onChange={handleChange} />
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Year Opened</Label>
+						<Label className='block mb-2 font-medium'>Year Opened</Label>
 						<DatePicker
 							selected={formData.openIn}
 							onChange={(date) => handleDateChange(date, 'openIn')}
 							showYearPicker
 							dateFormat='yyyy'
 							placeholderText='Select Year'
-							className='w-full px-2 py-1 border rounded bg-transparent'
+							className='w-full px-2 py-1 bg-transparent border rounded'
 						/>
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Description</Label>
+						<Label className='block mb-2 font-medium'>Description</Label>
 						<Textarea
 							name='description'
 							placeholder='Description'
@@ -243,7 +241,7 @@ const CreateHomeStay = () => {
 						/>
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Address</Label>
+						<Label className='block mb-2 font-medium'>Address</Label>
 						<Textarea
 							name='address'
 							placeholder='Address'
@@ -252,7 +250,7 @@ const CreateHomeStay = () => {
 						/>
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Standard (1-5)</Label>
+						<Label className='block mb-2 font-medium'>Standard (1-5)</Label>
 						<Input
 							name='standar'
 							type='number'
@@ -263,11 +261,11 @@ const CreateHomeStay = () => {
 						/>
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>City</Label>
+						<Label className='block mb-2 font-medium'>City</Label>
 						<Input name='city' placeholder='City' value={formData.city} onChange={handleChange} />
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Check-In Time</Label>
+						<Label className='block mb-2 font-medium'>Check-In Time</Label>
 						<DatePicker
 							selected={formData.checkInTime}
 							onChange={(date) => handleDateChange(date, 'checkInTime')}
@@ -277,11 +275,11 @@ const CreateHomeStay = () => {
 							timeCaption='Time'
 							dateFormat='h:mm aa'
 							placeholderText='Check-In Time'
-							className='w-full px-2 py-1 border rounded bg-transparent'
+							className='w-full px-2 py-1 bg-transparent border rounded'
 						/>
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Check-Out Time</Label>
+						<Label className='block mb-2 font-medium'>Check-Out Time</Label>
 						<DatePicker
 							selected={formData.checkOutTime}
 							onChange={(date) => handleDateChange(date, 'checkOutTime')}
@@ -291,20 +289,20 @@ const CreateHomeStay = () => {
 							timeCaption='Time'
 							dateFormat='h:mm aa'
 							placeholderText='Check-Out Time'
-							className='w-full px-2 py-1 border rounded bg-transparent'
+							className='w-full px-2 py-1 bg-transparent border rounded'
 						/>
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Price</Label>
+						<Label className='block mb-2 font-medium'>Price</Label>
 						<Input name='price' placeholder='Price' value={formData.price} onChange={handleChange} />
 					</div>
 					<div>
-						<Label className='block font-medium mb-2'>Date</Label>
+						<Label className='block mb-2 font-medium'>Date</Label>
 						<DatePicker
 							selected={formData.date}
 							onChange={(date) => handleDateChange(date, 'date')}
 							placeholderText='Date'
-							className='w-full px-2 py-1 border rounded bg-transparent'
+							className='w-full px-2 py-1 bg-transparent border rounded'
 						/>
 					</div>
 				</div>

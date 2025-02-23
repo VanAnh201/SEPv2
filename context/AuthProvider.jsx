@@ -1,7 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
 import { getUserInfo } from 'pages/api/auth/getMe';
-import { jwtDecode } from 'jwt-decode';
 import { useRouter } from 'next/navigation';
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import Provider from 'utils/Provider';
@@ -19,6 +18,7 @@ export const AuthProvider = ({ children }) => {
 			localStorage.setItem('accessToken', accessToken);
 			localStorage.setItem('refreshToken', refreshToken);
 			setIsAuthenticated(true);
+			refetch();
 		}
 	};
 
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }) => {
 
 	return (
 		<Provider>
-			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch }}>
+			<AuthContext.Provider value={{ isAuthenticated, login, logout, dataProfile, refetch, isLoading }}>
 				{children}
 			</AuthContext.Provider>
 		</Provider>

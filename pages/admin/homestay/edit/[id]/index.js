@@ -14,6 +14,8 @@ import { PhotoProvider, PhotoView } from 'react-photo-view';
 import 'react-photo-view/dist/react-photo-view.css';
 import 'react-datepicker/dist/react-datepicker.css';
 import { editHomeStayInformation } from 'pages/api/homestay/updateHomeStay';
+import { uploadImage } from 'pages/api/image/uploadImage';
+import { uploadImages } from 'pages/api/homestay/uploadImageHomeStay';
 
 const UpdateHomeStay = () => {
 	const { id } = useParams() ?? {};
@@ -88,6 +90,35 @@ const UpdateHomeStay = () => {
 		mutation.mutate(updatedData);
 	};
 
+	const handleMainImageUpload = async (e) => {
+		const file = e.target.files[0];
+		if (!file) return;
+
+		try {
+			const result = await uploadImage(file);
+			setFormData((prev) => ({ ...prev, mainImage: result.url }));
+			toast.success('Main image uploaded successfully!');
+		} catch (err) {
+			toast.error('Failed to upload main image.');
+		}
+	};
+
+	const handleAdditionalImagesUpload = async (e) => {
+		const files = Array.from(e.target.files);
+		if (files.length === 0) return;
+
+		try {
+			const result = await uploadImages(files);
+			setFormData((prev) => ({
+				...prev,
+				homeStayImage: [...prev.homeStayImage, ...result.urls],
+			}));
+			toast.success('Additional images uploaded successfully!');
+		} catch (err) {
+			toast.error('Failed to upload additional images.');
+		}
+	};
+
 	if (isLoading) {
 		return (
 			<div className='fixed top-0 left-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
@@ -99,6 +130,8 @@ const UpdateHomeStay = () => {
 	if (error) {
 		return <p className='text-center text-red-500 py-8'>Error fetching details</p>;
 	}
+
+	console.log('formData', formData);
 
 	return (
 		<AdminLayout>
@@ -119,12 +152,7 @@ const UpdateHomeStay = () => {
 								</PhotoView>
 							</PhotoProvider>
 						)}
-						<Input
-							name='mainImage'
-							value={formData.mainImage}
-							onChange={handleChange}
-							placeholder='Main Image URL'
-						/>
+						<Input type='file' accept='image/*' onChange={handleMainImageUpload} className='mt-2' />
 					</div>
 
 					<div>
@@ -204,7 +232,7 @@ const UpdateHomeStay = () => {
 
 				<div>
 					<Label>Additional Images</Label>
-					<div className='grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4'>
+					<div className='grid grid-cols-4 sm:grid-cols-6 lg:grid-cols-8 gap-4 mb-4'>
 						{formData.homeStayImage.map((img, index) => (
 							<PhotoProvider key={index}>
 								<PhotoView src={img.image}>
@@ -217,6 +245,7 @@ const UpdateHomeStay = () => {
 							</PhotoProvider>
 						))}
 					</div>
+					<Input type='file' accept='image/*' multiple onChange={handleAdditionalImagesUpload} />
 				</div>
 
 				<div className='flex justify-end mt-6'>

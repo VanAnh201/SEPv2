@@ -25,7 +25,7 @@ const items = [
 ];
 
 export function AppSidebarAmin() {
-	const { logout, dataProfile } = useAuth();
+	const { logout, dataProfile, isLoading } = useAuth();
 	const pathname = usePathname();
 
 	return (
@@ -65,20 +65,28 @@ export function AppSidebarAmin() {
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<SidebarMenuButton>
-									{dataProfile ? (
-										dataProfile.avatar ? (
-											<Image
-												src={dataProfile.avatar}
-												width={50}
-												height={50}
-												alt='avt'
-												className='object-contain size-8 rounded-md'
-											/>
-										) : (
-											<User2 className='size-8' />
-										)
+									{isLoading ? (
+										<div className='absolute inset-0 flex items-center justify-center w-full h-full bg-white bg-opacity-50 z-50'>
+											<div className='size-3 border-t-2 border-blue-500 rounded-full animate-spin'></div>
+										</div>
 									) : (
-										<User2 className='size-8' />
+										<>
+											{dataProfile ? (
+												dataProfile.avatar ? (
+													<Image
+														src={dataProfile.avatar}
+														width={50}
+														height={50}
+														alt='avt'
+														className='object-contain size-8 rounded-md'
+													/>
+												) : (
+													<User2 className='size-8' />
+												)
+											) : (
+												<User2 className='size-8' />
+											)}
+										</>
 									)}
 
 									{dataProfile?.fullName}
